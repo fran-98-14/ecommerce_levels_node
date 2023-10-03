@@ -10,7 +10,7 @@ Microservicio para gestión de Niveles de Usuario
    - Publicar Subida de nivel
 - [Niveles](#niveles)
    - [Listar Niveles](#listar-niveles)
-   - [Crear Nivel](#crear-nivel)
+   - [Crear / Editar Nivel](#crear-nivel)
    - [Eliminar nivel](#eliminar-nivel)
    - [Nivel de Usuario](#nivel-de-usuario)
 	

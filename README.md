@@ -13,3 +13,6 @@ El número de dicho nivel se calculará en base al índice de esta lista ordenad
 - RabbitMQ: Levels deberá escuchar eventos de Order para aplicar puntos a un usuario.
 - MongoDB
 - Node
+
+### Comunicación con RabbitMQ
+El microservicio recibirá mensajes "order_placed" del microservicio de Órdenes. 
