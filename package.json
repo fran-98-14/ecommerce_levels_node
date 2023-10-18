@@ -3,29 +3,45 @@
   "version": "1.0.0",
   "description": "El microservicio Levels permite asignar distintas categorías a los usuarios.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && npm run watch",
+    "build": "npm run build-ts",
+    "serve": "node dist/server.js",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\"  \"npm run watch-ts\" \"nodemon dist/server.js\"",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "apidoc": "./node_modules/.bin/apidoc -i src -o ./dist/public",
+    "apidocmd": "./node_modules/.bin/apidoc-markdown2 -p ./dist/public -o README-API.md"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "4.18.2"
-},
-"devDependencies": {
-    "@types/body-parser": "1.19.2",
-    "@types/express": "^4.17.18",
-    "@types/node": "^20.8.2",
-    "@types/jest": "29.1.2",
+    "@types/mongoose": "^5.11.97",
+    "body-parser": "^1.20.2",
+    "connect-mongo": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "4.18.2",
+    "mongoose": "^7.6.1",
+    "node-cache": "^5.1.2",
+    "typed-rest-client": "^1.8.11"
+  },
+  "devDependencies": {
+    "@types/amqplib": "0.10.2",
+    "@types/async": "3.2.21",
+    "@types/body-parser": "1.19.3",
+    "@types/compression": "1.7.3",
+    "@types/cors": "2.8.14",
     "@types/escape-html": "1.0.2",
-    "@types/morgan": "1.9.3",
-    "@types/cors": "2.8.12",
-    "@types/compression": "1.7.2",
-    "@types/amqplib": "0.8.2",
-    "@types/async": "3.2.15",
-    "apidoc": "0.22.1",
+    "@types/express": "^4.17.18",
+    "@types/jest": "29.5.5",
+    "@types/morgan": "1.9.6",
+    "@types/node": "^20.8.2",
+    "apidoc": "1.2.0",
     "apidoc-markdown2": "0.3.7",
-    "concurrently": "7.4.0",
-    "nodemon": "2.0.20",
+    "concurrently": "^8.2.1",
+    "nodemon": "3.0.1",
     "typescript": "5.2.2"
   }
 }
