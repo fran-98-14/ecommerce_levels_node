@@ -2,7 +2,7 @@ import * as express from "express"
 import * as token from "../token"
 import * as error from "./error"
 
-interface IUserSessionRequest extends express.Request {
+export interface IUserSessionRequest extends express.Request {
     user: token.ISession;
   }
   
@@ -23,8 +23,8 @@ interface IUserSessionRequest extends express.Request {
   
     token.validate(auth)
       .then(user => {
-        req.user = user;
+        req.user = user as token.ISession;
         next();
       })
-      .catch(err => error.handle(res, err));
+      .catch(err => {console.log(err);error.handle(res, err)});
   }
