@@ -25,6 +25,7 @@
     "express": "4.18.2",
     "mongoose": "^7.6.1",
     "node-cache": "^5.1.2",
+    "passport-jwt": "^4.0.1",
     "typed-rest-client": "^1.8.11"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "@types/jest": "29.5.5",
     "@types/morgan": "1.9.6",
     "@types/node": "^20.8.2",
+    "@types/passport-jwt": "^3.0.11",
     "apidoc": "1.2.0",
     "apidoc-markdown2": "0.3.7",
     "concurrently": "^8.2.1",

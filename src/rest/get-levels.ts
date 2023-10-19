@@ -2,7 +2,7 @@ import {Express, Request, Response} from "express"
 import { getLevels as getLevelsService } from "../domain/level";
 
 export function init(app: Express){
-    app.get("/levels",getLevels);
+    app.get("/levels", getLevels);
 }
 
 async function getLevels(req: Request, res: Response){
