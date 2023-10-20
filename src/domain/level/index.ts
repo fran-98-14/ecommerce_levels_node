@@ -1,8 +1,9 @@
-import {createLevel, getLevels} from "./service"
+import {createLevel, getLevels, deleteLevel} from "./service"
 import * as level from "./minPoints"
 
 
 export{
     createLevel,
-    getLevels
+    getLevels,
+    deleteLevel
 }

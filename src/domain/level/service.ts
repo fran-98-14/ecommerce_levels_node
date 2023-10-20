@@ -1,4 +1,5 @@
 import { MinPoints, IMinPoints } from "./minPoints";
+import * as error from "../../server/error"
 
 export interface ILevel{
     level: number;
@@ -56,9 +57,20 @@ export function getLevels(): Promise<Array<ILevel>>{
 }
 
 export function getLevelByPoins(points: number): Promise<ILevel>{
-    return new Promise((res,rej)=>{
-        MinPoints.find({},(err: any, levels: Array<IMinPoints>)=>{
-
-        })
+    return new Promise(async (res,rej)=>{
+        const levels = (await getLevels()).filter(x=>x.minPoints<= points);
+        if(!levels) return rej(0)
+        res(levels.at(levels.length));
+        
     })
+}
+
+export async function deleteLevel(points: number): Promise<void>{
+    
+    return new Promise(async (res, rej)=>{
+        const result = await MinPoints.deleteMany({minPoints:points})
+        if(result.deletedCount == 0) return rej(error.newError(error.ERROR_NOT_FOUND, "No se encontró el nivel."))
+        res();
+    });
+
 }

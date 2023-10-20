@@ -4,12 +4,16 @@ import * as cors from "cors";
 import { Config, getConfig } from "./server/environment";
 import * as mongoose from "mongoose";
 import * as bodyParser from "body-parser"
+import { createUserLevelTest } from "./domain/user-level/service";
 
 // Variables de entorno
 const conf: Config = getConfig(process.env);
 
 mongoose.connect(conf.mongoDb)
-    .then(value=>{console.log(`Connected to Mongo.`)})
+    .then(value=>{
+        //createUserLevelTest();
+        console.log(`Connected to Mongo.`)
+    })
     .catch(err=>{
         console.log(err);
         process.exit();

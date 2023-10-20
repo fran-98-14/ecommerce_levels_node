@@ -21,7 +21,8 @@ export function getConfig(environment: any): Config {
       mongoDb: process.env.MONGO_URL || "mongodb://127.0.0.1:27017/Levels",
       securityServer: process.env.AUTH_SERVICE_URL || "http://localhost:3000",
       catalogServer: process.env.CATALOG_SERVICE_URL || "http://localhost:3002",
-      rabbitUrl: process.env.RABBIT_URL || "amqp://localhost"
+      rabbitUrl: process.env.RABBIT_URL || "amqp://localhost",
+      daysToExpirePoints: 365
     };
   }
   return config;
@@ -34,4 +35,5 @@ export interface Config {
   securityServer: string;
   catalogServer: string;
   rabbitUrl: string;
+  daysToExpirePoints: number;
 }
