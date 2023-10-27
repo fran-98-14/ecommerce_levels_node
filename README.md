@@ -1,18 +1,19 @@
 # Microservicio Levels (Niveles de Usuario)
-El microservicio Levels permite asignar niveles a los usuarios dependiendo de la cantidad de puntos que estos hayan acumulado mediante sus compras. Para mantener la simplicidad y la integración con otros microservicios del contexto actual del [ecommerce](https://github.com/nmarsollier/ecommerce), la cantidad de puntos se obtiene del monto de una orden realizada.
+El microservicio Levels permite que los usuarios acumulen puntos por sus compras realizadas. En base a la cantidad de puntos que el usuario haya acumulado, se le asignará un nivel. 
 
-Levels expone una interfaz REST que permite obtener el nivel y los puntos de un usuario, y permitirá a los usuarios con permisos admin gestionar los niveles y los puntos requeridos para alcanzarlos.
+Permitirá la gestión de niveles por un usuario administrador. Estos niveles quedarán deterimnados por una lista de "puntos mínimos" que determinarán la cantidad de puntos necesaria para alcanzar el nivel siguiente. El número del nivel será calculado en base a estos puntos mínimos que se hayen cargados.
 
-## Gestión de niveles
-El servicio contendrá una lista de números que representará la cantidad de puntos que deberá obtener un usuario para subir al siguiente nivel.
-El número de dicho nivel se calculará en base al índice de esta lista ordenada, así el usuario admin podrá ingresar los puntos donde se cambia de nivel sin tener que gestionar rangos ni números de nivel (para mantener esta lógica simple).
+Levels escuchará un evento lanzado por el microservicio de Órdenes del [ecommerce](https://github.com/nmarsollier/ecommerce), el cual indica que se ha completado el pago de una Orden. Al recibir este evento, Levels guardará la cantidad de puntos que le corresponden al usuario en base a su compra, con una fecha de expiración.
 
+El Microservicio expone mediante su interfaz REST un endpoint para obtener el nivel actual del usuario autenticado que realiza la consulta, basándose en todos los puntos que tenga guardados y que aún no hayan expirado.
+
+Levels emitirá un evento de tipo broadcast cuando registre una compra realizada, informando el nivel anterior, el nivel actual, el total de puntos del usuario, la cantidad de puntos necesaria para el siguiente nivel y la cantidad y fecha de expiración del próximo vencimiento de puntos.
 
 ## Dependencias
-- Auth: Sólo un usuario autenticado podrá consultar su nivel y sólo un usuario con permisos Admin podrá gestionar los niveles y puntos requeridos.
-- RabbitMQ: Se utilizará para escuchar mensajes que impliquen una suba de nivel y para enviar mensajes cuando se asignen los puntos a un usuario.
+- Microservicio Auth: Sólo un usuario autenticado podrá consultar su nivel y sólo un usuario con permisos Admin podrá gestionar los niveles y puntos requeridos.
+- RabbitMQ: Se utilizará para escuchar mensajes que impliquen que se ha concretado una compra y para enviar broadcast relacionados a los niveles.
 - MongoDB
 - Node
+- Express
 
-### Comunicación con RabbitMQ
-El microservicio recibirá mensajes en el exchange "sell_flow" con topic "order_placed" del microservicio de Órdenes. 
+### [API (REST y Rabbit)](README-API.md)
