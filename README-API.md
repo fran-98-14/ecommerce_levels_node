@@ -35,16 +35,11 @@ Mensaje
 
 ```json
 {
-"type": "payment_placed",
+"type": "payment_completed",
 "message" : {
-    "orderId": "{orderId}",
-     "amount": "{totalAmount}",
-     "payments":[
-      {
-         "method": "Payment method",
-         "amount": "Payment amount"
-      }
-     ]
+   "orderId": "{orderId}",
+   "userId": "{userId}",
+   "totalAmount": "{totalAmount}",
    }
 }
 ```
