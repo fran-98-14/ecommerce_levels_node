@@ -1,11 +1,6 @@
 import { IRabbitMessage } from "./tools/common";
 import { RabbitTopicConsumer } from "./tools/topicConsumer";
-
-interface IPaymentCompletedMessage{
-    orderId :string
-    userId :string
-    totalAmount :number
-}
+import { IPaymentCompletedMessage } from "../domain/user-level";
 
 export function init(){
     const levels = new RabbitTopicConsumer('','order','payment_completed');
@@ -13,5 +8,6 @@ export function init(){
 }
 
 function processPaymentCompleted(rabbitMessage: IRabbitMessage){
+    const payment = rabbitMessage.message as IPaymentCompletedMessage;
 
 }
