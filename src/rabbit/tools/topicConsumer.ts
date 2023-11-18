@@ -11,10 +11,11 @@ export class RabbitTopicConsumer {
     conf = env.getConfig(process.env);
     processors = new Map<string, RabbitProcessor>();
 
-    constructor(private queue: string, private exchange: string, private topic: string) {
+    constructor(private exchange: string, private topic: string) {
     }
 
     addProcessor(type: string, processor: RabbitProcessor) {
+        console.log("Adding Topic Processor. Type: ", type, + " processor: " + processor.name)
         this.processors.set(type, processor);
     }
 
@@ -25,9 +26,8 @@ export class RabbitTopicConsumer {
      */
     async init() {
         try {
-            const conn = await amqp.connect(this.conf.rabbitUrl);
-
-            const channel = await conn.createChannel();
+            const connection = await amqp.connect(this.conf.rabbitUrl);
+            const channel = await connection.createChannel();
 
             channel.on("close", function () {
                 console.error("RabbitMQ  " + this.exchange + " conexión cerrada, intentado reconecta en 10'");
@@ -36,13 +36,13 @@ export class RabbitTopicConsumer {
 
             console.log("RabbitMQ " + this.exchange + " conectado");
 
-            const exchange = await channel.assertExchange(this.exchange, "topic", { durable: false });
+            await channel.assertExchange(this.exchange, "topic", { durable: false });
 
-            const queue = await channel.assertQueue(this.queue, { durable: false, exclusive: false, autoDelete: false });
+            const { queue } = await channel.assertQueue('', { exclusive: true });
 
-            channel.bindQueue(this.queue, this.exchange, this.topic);
+            await channel.bindQueue(queue, this.exchange, this.topic);
 
-            channel.consume(queue.queue,
+            await channel.consume(queue,
                 (message) => {
                     const rabbitMessage: IRabbitMessage = JSON.parse(message.content.toString());
                     if (this.processors.has(rabbitMessage.type)) {

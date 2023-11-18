@@ -1,5 +1,6 @@
-import { IPaymentCompletedMessage } from "./addPoints";
+import { IPaymentCompletedMessage, addPoints } from "./addPoints";
 
 export {
-    IPaymentCompletedMessage
+    IPaymentCompletedMessage,
+    addPoints
 }

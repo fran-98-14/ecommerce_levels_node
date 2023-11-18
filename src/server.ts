@@ -4,6 +4,8 @@ import * as cors from "cors";
 import { Config, getConfig } from "./server/environment";
 import * as mongoose from "mongoose";
 import * as bodyParser from "body-parser"
+import * as logout from "./rabbit/logoutService";
+import * as processPayment from "./rabbit/userLevelService";
 import { createUserLevelTest } from "./domain/user-level/service";
 
 // Variables de entorno
@@ -30,5 +32,8 @@ app.use(cors({
 app.use(bodyParser.json());
 
 routes.init(app);
+
+processPayment.init();
+logout.init();
 
 app.listen(conf.port,()=>{console.log(`Listening on port ${conf.port}`)})

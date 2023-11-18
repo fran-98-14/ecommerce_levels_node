@@ -1,3 +1,6 @@
+import { createUserLevel } from "./service"
+
+
 
 export interface IPaymentCompletedMessage{
     orderId :string
@@ -7,5 +10,5 @@ export interface IPaymentCompletedMessage{
 
 
 export function addPoints(payment: IPaymentCompletedMessage){
-
+    createUserLevel(payment.userId, payment.totalAmount);
 }

@@ -17,6 +17,31 @@ export async function getUserLevel(userId: string) {
     }
 }
 
+export async function createUserLevel(userId :string, totalAmount :number){
+    
+    console.log("User id: ",userId, ", total amount: ",totalAmount)
+    const user = await UserLevel.findOne({userId})
+    if(user){
+        console.log(user);
+        user.userPoints.push({points: totalAmount});
+        await user.save();
+    }
+    else {
+        const u = {
+            userId,
+            userPoints: [
+                {
+                    points: totalAmount,
+                },
+            ]
+        }
+        const created = await UserLevel.create(u);
+        created.save();
+        console.log(created.userPoints);
+    }
+    
+    
+}
 
 export function createUserLevelTest() {
     const userLevels = [
