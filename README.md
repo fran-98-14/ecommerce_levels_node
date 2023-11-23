@@ -17,3 +17,21 @@ Levels emitirá un evento de tipo broadcast cuando registre una compra realizada
 - Express
 
 ### [API (REST y Rabbit)](README-API.md)
+
+## Docker
+
+### Build
+
+```bash
+docker build --no-cache -t dev-levels-node .
+```
+
+### El contenedor
+
+```bash
+# Mac | Windows
+docker run -it --name dev-levels-node -p 3010:3010 -v %cd%:/app dev-levels-node
+
+# Linux
+docker run -it --add-host host.docker.internal:172.17.0.1 --name dev-levels-node -p 3010:3010 -v $PWD:/app dev-levels-node
+```
