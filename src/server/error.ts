@@ -48,12 +48,28 @@ export function newError(code: number, err: string): ValidationErrorMessage {
  */
 
 /**
+ * @apiDefine ParamValidationErrors
+ *
+ * @apiErrorExample 400 Bad Request
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *        "messages" : [
+ *          {
+ *            "path" : "{Nombre de la propiedad}",
+ *            "message" : "{Motivo del error}"
+ *          },
+ *          ...
+ *       ]
+ *     }
+ */
+
+/**
  * @apiDefine OtherErrors
  *
  * @apiErrorExample 500 Server Error
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *        "error" : "Not Found"
+ *        "error" : "Internal error"
  *     }
  *
  */

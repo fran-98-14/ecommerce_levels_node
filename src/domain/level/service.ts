@@ -59,8 +59,11 @@ export function getLevels(): Promise<Array<ILevel>>{
 export function getLevelByPoins(points: number): Promise<ILevel>{
     return new Promise(async (res,rej)=>{
         const levels = (await getLevels()).filter(x=>x.minPoints<= points);
-        if(!levels) return rej(0)
-        res(levels.at(levels.length));
+        if(levels.length==0) {
+            res({level: 0, minPoints: 0})
+        }else{
+            res(levels.at(levels.length-1));
+        }
         
     })
 }

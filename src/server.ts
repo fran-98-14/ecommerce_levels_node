@@ -7,6 +7,7 @@ import * as bodyParser from "body-parser"
 import * as logout from "./rabbit/logoutService";
 import * as processPayment from "./rabbit/userLevelService";
 import { createUserLevelTest } from "./domain/user-level/service";
+import path = require("path");
 
 // Variables de entorno
 const conf: Config = getConfig(process.env);
@@ -30,6 +31,11 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
+
+app.use(
+express.static(path.join(__dirname, "./public"), { maxAge: 31557600000 })
+);
+app.get("/", (req, res, next) => { res.redirect("index.html"); });
 
 routes.init(app);
 

@@ -1,5 +1,6 @@
+import { Types } from "mongoose";
 import { getLevelByPoins } from "../level/service";
-import { IUserLevel, UserLevel } from "./user-level";
+import { IUserLevel, IUserPoints, UserLevel } from "./user-level";
 
 
 
@@ -15,6 +16,14 @@ export async function getUserLevel(userId: string) {
             level
         }
     }
+    else return {
+        userId: userId,
+        userPoints: null,
+        totalPoints: 0,
+        level: {
+            level: 0,
+            minPoints: 0
+        }}
 }
 
 export async function createUserLevel(userId :string, totalAmount :number){

@@ -7,6 +7,41 @@ export function init(app:Express){
     app.delete("/level", validateToken, deleteLevel)
 }
 
+/**
+ * @api {delete} /level Eliminar un nivel 
+ * @apiName Eliminar nivel
+ * @apiGroup Niveles
+ *
+ * @apiDescription Elimina un nivel dado un minPoints determinado
+ *
+ * @apiExample {json} Body
+ *    {
+ *      "minPoints": "{minPoints}",
+ *    }
+ *
+ * @apiSuccessExample {string} Body
+ *    HTTP/1.1 200 Ok
+ *
+ * @apiUse Unauthorized
+ * @apiUse OtherErrors
+ * @apiErrorExample 404 Not Found 
+ *     HTTP/1.1 404 Not Found
+ *      {
+ *          "error": {
+ *              "code": 404,
+ *              "error": "No se encontró el nivel."
+ *          }
+ *      }
+ * @apiErrorExample 400 Bad Request
+ *  HTTP/1.1 400 Bad Request
+ * {
+ *  "error": {
+ *       "code": 400,
+ *       "error": "Debe proporcionar un minPoints numérico."
+ *   }
+ * }
+ */
+
 async function deleteLevel(req: IUserSessionRequest, res: Response){
 
     if(!req.user.user.hasPermission("admin")) return error.handle(res, error.newError(error.ERROR_UNAUTHORIZED, "Unauthorized"));
