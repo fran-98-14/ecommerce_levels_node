@@ -10,8 +10,8 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "apidoc": "./node_modules/.bin/apidoc -i src -o ./dist/public",
-    "apidocmd": "./node_modules/.bin/apidoc-markdown2 -p ./dist/public -o README-API.md"
+    "apidoc": "apidoc -i src -o ./dist/public",
+    "apidocmd": "apidoc-markdown2 -p ./dist/public -o README-API.md"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/mongoose": "^5.11.97",
     "amqplib": "^0.10.3",
+    "apidoc-markdown": "^7.2.5",
     "body-parser": "^1.20.2",
     "connect-mongo": "^5.0.0",
     "cors": "^2.8.5",

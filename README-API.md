@@ -1,305 +1,312 @@
-<a name="top" hidden></a>
+<a name="top"></a>
+# Levels en Node v0.1.0
 
-# Levels Service
+Microservicio de Niveles
 
-Microservicio para gestión de Niveles de Usuario
-	
+# Table of contents
 
-- [RabbitMQ_GET](#rabbitmq-get)
-   - [Pago Realizado](#pago-realizado)
+- [Niveles](#Niveles)
+  - [Crear nivel](#Crear-nivel)
+  - [Eliminar un nivel](#Eliminar-un-nivel)
+  - [Obtener nivel usuario](#Obtener-nivel-usuario)
+  - [Obtener niveles](#Obtener-niveles)
+- [RabbitMQ_GET](#RabbitMQ_GET)
+  - [Logout de Usuarios](#Logout-de-Usuarios)
+  - [sell_flow, topic: payment_completed](#sell_flow,-topic:-payment_completed)
+- [RabbitMQ_POST](#RabbitMQ_POST)
+  - [Usuario subió de nivel](#Usuario-subió-de-nivel)
 
-- [RabbitMQ_POST](#rabbitmq-post)
-   - [Fanout Puntos Asignados](#puntos-asignados)
+___
 
-- [Niveles](#niveles)
-   - [Listar Niveles](#listar-niveles)
-   - [Crear / Editar Nivel](#crear-nivel)
-   - [Eliminar nivel](#eliminar-nivel)
-   - [Nivel de Usuario](#nivel-de-usuario)
-	
 
-# <a name="rabbitmq-get"></a> RabbitMQ_GET
+# <a name='Niveles'></a> Niveles
 
-## <a name='pago-realizado'></a> Pago realizado
+## <a name='Crear-nivel'></a> Crear nivel
 [Back to top](#top)
 
-<p>Escucha mensajes &quot;payment_placed&quot; emitidos por Order.</p>
+<p>Crea un nuevo nivel por medio de los puntos mínimos asignados.</p>
 
-	TOPIC order/payment_placed
-
-
-
-### Ejemplo
-
-Mensaje
-
-```json
-{
-"type": "payment_completed",
-"message" : {
-   "orderId": "{orderId}",
-   "userId": "{userId}",
-   "totalAmount": "{totalAmount}",
-   }
-}
+```
+POST /level
 ```
 
-
-# <a name="rabbitmq-post"></a> RabbitMQ_POST
-
-## <a name='puntos-asignados'></a> Puntos asignados
-[Back to top](#top)
-
-
-<p>Emite un broadcast &quot;points_assigned&quot;.</p>
-
-	FANOUT levels/points_assigned
-
-
-
-### Ejemplo
-
-Mensaje
-
-```json
-{
-"type": "points_assigned",
-"message" : {
-     "userId": "{userId}",
-     "previousLevel": "{Nivel anterior}",
-     "newLevel": "{Nivel alcanzado}",
-     "points": "{Puntos actuales}",
-     "nextExpire" : "{fecha sig expiracion}",
-     "nextExpirePoints": "{puntos a expirar}"
-   }
-}
-```
-
-
-# <a name='niveles'></a> Niveles
-
-## <a name='listar-niveles'></a> Listar niveles
-[Back to top](#top)
-
-<p>Obtiene una lista de los niveles creados. No requiere auth, por si se desean mostrar los niveles disponibles sin hacer login.</p>
-
-	GET /levels
-
-
-
-### Ejemplos
-
-#### Respuesta
-
-      HTTP/1.1 200 OK
-
-```json
-[
-   {
-      "minPoints": "0",
-      "level": "1",
-   },
-   {
-      "minPoints": "100",
-      "level": "2",
-   },
-   {
-      "minPoints": "500",
-      "level": "3",
-   }
-]
-```
-
-
-#### Error 
-
-      HTTP/1.1 500 Internal Server Error
-
-```json
-{
-   "error" : "msg error"
-}
-```
-
-
-## <a name="crear-nivel"></a> Crear o editar nivel
-[Back to top](#top)
-
-<p>Crea un nuevo nivel. El usuario logueado debe tener permisos &quot;admin&quot;.</p>
-<p>El nivel se crea agregando una nueva cantidad mínima de puntos con la cual se pasará al siguiente nivel.</p>
-<p>El nivel que corresponda a cada cantidad mínima se obtendrá en forma dinámica dependiendo los minPoints cargados.</p>
-
-
-	POST /level
-
-### Validaciones
-- Se debe ingresar un valor mayor a 0.
-- El valor ingresado no debe existir previamente.
-  
-
-### Ejemplo
+### Examples
 
 Body
 
 ```json
 {
-   "minPoints": "{mínimo de puntos para subir nivel}",
+  "minPoints": "{minPoints}",
 }
 ```
 
-Header Autorización
+
+### Success response example
+
+#### Success response example - `Body`
+
+```string
+HTTP/1.1 200 Ok
+```
+
+### Error response example
+
+#### Error response example - `400 Bad Request`
+
+```json
+ HTTP/1.1 400 Bad Request
+"minPoints debe ser numérico mayor a 0."
+```
+
+#### Error response example - `401 Unauthorized`
+
+```json
+HTTP/1.1 401 Unauthorized
+```
+
+#### Error response example - `500 Server Error`
+
+```json
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Internal error"
+}
+```
+
+## <a name='Eliminar-un-nivel'></a> Eliminar un nivel
+[Back to top](#top)
+
+<p>Elimina un nivel dado un minPoints determinado</p>
 
 ```
-Authorization: bearer {token}
+DELETE /level
+```
+
+### Examples
+
+Body
+
+```json
+{
+  "minPoints": "{minPoints}",
+}
 ```
 
 
-#### Respuesta
+### Success response example
 
-Respuesta 
-<p>La respuesta devolverá la lista completa de niveles creados.</p>
+#### Success response example - `Body`
 
-      HTTP/1.1 200 OK
+```string
+HTTP/1.1 200 Ok
+```
+
+### Error response example
+
+#### Error response example - `404 Not Found `
+
+```json
+HTTP/1.1 404 Not Found
+ {
+     "error": {
+         "code": 404,
+         "error": "No se encontró el nivel."
+     }
+ }
+```
+
+#### Error response example - `400 Bad Request`
+
+```json
+ HTTP/1.1 400 Bad Request
+{
+ "error": {
+      "code": 400,
+      "error": "Debe proporcionar un minPoints numérico."
+  }
+}
+```
+
+#### Error response example - `401 Unauthorized`
+
+```json
+HTTP/1.1 401 Unauthorized
+```
+
+#### Error response example - `500 Server Error`
+
+```json
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Internal error"
+}
+```
+
+## <a name='Obtener-nivel-usuario'></a> Obtener nivel usuario
+[Back to top](#top)
+
+<p>Obtiene el nivel actual del usuario autenticado.</p>
+
+```
+GET /userLevel
+```
+
+### Success response example
+
+#### Success response example - `Body`
+
+```json
+{
+   "userId": "65401eff79049caff4f9531d",
+   "userPoints": [
+       {
+           "points": 150,
+           "_id": "655c0938d928e31ea6649bf2",
+           "expires": "2024-11-20T01:34:48.776Z"
+       },
+       {
+           "points": 150,
+           "_id": "655c09a9d928e31ea6649bf7",
+           "expires": "2024-11-20T01:36:41.933Z"
+       },
+       {
+           "points": 150,
+           "_id": "655c09a9d928e31ea6649bfc",
+           "expires": "2024-11-20T01:36:41.966Z"
+   ],
+   "totalPoints": 450,
+   "level": {
+       "level": 2,
+       "minPoints": 300
+   }
+}
+```
+
+### Error response example
+
+#### Error response example - `401 Unauthorized`
+
+```json
+HTTP/1.1 401 Unauthorized
+```
+
+#### Error response example - `500 Server Error`
+
+```json
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Internal error"
+}
+```
+
+## <a name='Obtener-niveles'></a> Obtener niveles
+[Back to top](#top)
+
+<p>Obtiene los niveles creados hasta el momento.</p>
+
+```
+GET /levels
+```
+
+### Success response example
+
+#### Success response example - `Body`
 
 ```json
 [
-   {
-      "minPoints": 0,
-      "level": 1,
-   },
-   {
-      "minPoints": 100,
-      "level": 2,
-   },
-   {
-      "minPoints": 500,
-      "level": 3,
-   }
+    {
+        "level": 1,
+        "minPoints": 200
+    },
+    {
+        "level": 2,
+        "minPoints": 600
+    }
 ]
 ```
 
+### Error response example
 
-#### Error
-
-      HTTP/1.1 401 Unauthorized
-
-```json
-{
-   "error" : "Unauthorized"
-}
-```
-      HTTP/1.1 400 Bad Request
+#### Error response example - `500 Server Error`
 
 ```json
+HTTP/1.1 500 Internal Server Error
 {
-   "error": "{Mensaje de error}"
+   "error" : "Internal error"
 }
 ```
 
-## <a name="eliminar-nivel"></a> Eliminar nivel
+# <a name='RabbitMQ_GET'></a> RabbitMQ_GET
+
+## <a name='Logout-de-Usuarios'></a> Logout de Usuarios
 [Back to top](#top)
 
-<p>Elimina el nivel ingresando el minPoints a eliminar. El usuario logueado debe tener permisos &quot;admin&quot;.</p>
+<p>Escucha de mensajes logout desde auth.</p>
 
-	DELETE /level
+```
+FANOUT auth/logout
+```
 
+### Success response example
 
-### Ejemplo
-
-#### Body
+#### Success response example - `Mensaje`
 
 ```json
 {
-   "minPoints": 100
+   "type": "logout",
+   "message": "{tokenId}"
 }
 ```
 
-#### Header Autorización
-
-```
-Authorization=bearer {token}
-```
-
-
-
-#### Respuesta
-
-Respuesta
-
-      HTTP/1.1 200 OK
-
-
-#### Error Response
-
-      HTTP/1.1 401 Unauthorized
-
-```json
-{
-   "error" : "Unauthorized"
-}
-```
-
-***
-
-      HTTP/1.1 404 Not Found
-
-```json
-{
-   "error" : "Not Found"
-}
-```
-
-
-## <a name='nivel-de-usuario'></a> Nivel de Usuario
-
+## <a name='sell_flow,-topic:-payment_completed'></a> sell_flow, topic: payment_completed
 [Back to top](#top)
 
-<p>Devuelve el nivel del usuario obtenido desde el token proporcionado, los puntos necesarios para subir de nivel y la fecha y cantidad de expiración de los próximos puntos a expirar.</p>
-<p>El nivel se calculará en base a los puntos registrados para el usuario y la lista de puntos mínimos cargados.</p>
+<p>Escucha desde order cuando se completa un pago.</p>
 
-	GET /level
+```
+TOPIC exchange:
+```
 
+### Success response example
 
-### Ejemplo
-
-Header Autorización
-
-
-      Authorization=bearer {token}
-
-
-
-#### Respuesta
-
-Respuesta
-
-      HTTP/1.1 200 OK
+#### Success response example - `Mensaje`
 
 ```json
 {
-   "level": "1",
-   "points": "475",
-   "pointsToUpgrade": "25",
-   "pointsExpireDate": "2024-01-26T15:30:00.000Z",
-   "pointsToExpire": "120"
+   "type": "payment-completed",
+   "message": {
+        orderId: '655eaa1a9655b46c6049b193',
+        userId: '65401eff79049caff4f9531d',
+        totalAmount: 150
+    }
+}
+```
+
+# <a name='RabbitMQ_POST'></a> RabbitMQ_POST
+
+## <a name='Usuario-subió-de-nivel'></a> Usuario subió de nivel
+[Back to top](#top)
+
+<p>levels emite un fanout notificando que un usuario subió de nivel con su última compra.</p>
+
+```
+FANOUT levels/levelUp
+```
+
+### Examples
+
+Mensaje
+
+```json
+{
+   "type": "level-up",
+    "message": {
+        "userId": "{userId}",
+        "level": "{level}",
+        "points": "{points}",
+        "pointsNextLevel": "{pointsNextLevel}"
+   }
 }
 ```
 
 
-#### Error
-
-      HTTP/1.1 401 Unauthorized
-
-```json
-{
-   "error" : "Unauthorized"
-}
-```
-
-      HTTP/1.1 500 Internal Server Error
-
-```json
-{
-   "error" : "Not Found"
-}
-```
